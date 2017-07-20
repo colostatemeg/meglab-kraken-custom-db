@@ -51,6 +51,7 @@ class KrakenParser(object):
 		plasmids = 0
 		for acc, vals in self.ftp_addresses.items():
 			extension = vals[0].split('/')[-1]
+			#print (extension)
 			counter += 1
 			request = urllib2.Request(vals[0] + '/' + extension + '_genomic.fna.gz')
 			request.add_header('Accept-encoding', 'gzip')
