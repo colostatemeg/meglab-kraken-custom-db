@@ -1,6 +1,9 @@
 # meglab-kraken-custom-db
-# Authors: EnriqueDoster and Steven Lakin (lakinsm)
-# Description: Python script that downloads and edit bacterial genomes from refseq (reference and representative) to create a custom Kraken database with genomic sequences seperated from plasmid sequences for improved read classification. 
+# Created by MEGlab https://meg.colostate.edu/ 
+# Authors: 
+  EnriqueDoster and Steven Lakin (lakinsm)
+# Description: 
+  Python script that downloads and edit bacterial genomes from refseq (reference and representative) to create a custom Kraken database with genomic sequences seperated from plasmid sequences for improved read classification. 
 # Usage :
   First must edit the UPPERCASE variables in the kraken-parser.py to make compatible with your machine. 
   Run the script in the directory where you want the script to create a directory with the downloaded genomes:
