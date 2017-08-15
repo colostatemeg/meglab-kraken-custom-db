@@ -11,9 +11,9 @@ from subprocess import call
 from StringIO import StringIO
 
 
-NCBI_GENBANK_ASSEMBLY_URL = 'ftp://ftp.ncbi.nlm.nih.gov/genomes/genbank/bacteria/assembly_summary.txt'
+NCBI_GENBANK_ASSEMBLY_URL = 'ftp://ftp.ncbi.nlm.nih.gov/genomes/genbank/assembly_summary_genbank.txt' #this includes all genomes
 OUTPUT_PATH = '/s/angus/index/databases/kraken_databases/ncbi_genbank_assembly_summary.txt'
-OUTPUT_FASTA_FOLDER = '18July2017_kraken_db'
+OUTPUT_FASTA_FOLDER = 'AUG2017_full_kraken_db'
 FTP_REGEXP = re.compile(r'(reference genome|representative genome)')
 PLASMID_REGEXP = re.compile(r'plasmid')
 
