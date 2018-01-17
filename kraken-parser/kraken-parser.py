@@ -10,13 +10,16 @@ import os
 from subprocess import call
 from StringIO import StringIO
 
+# The following variables in uppercase must be edited for your server and to specify which genomes you want to include.
+OUTPUT_PATH = '/home/enrique/MEG_lab/TEST-kraken/combined_assembly_summary.txt'
+OUTPUT_FASTA_FOLDER = 'meglab-customkraken-Jan2017'
+GROUP_list = ["bacteria","archaea","protozoa","viral"]
+#re.compile(r'(archaea|bacteria|fungi|invertebrate|metagenomes|other|plant|protozoa|vertebrate_mammalian|vertebrate_other|viral)') 	# These are all the options for genome categories. 
 
-NCBI_GENBANK_ASSEMBLY_URL = 'ftp://ftp.ncbi.nlm.nih.gov/genomes/genbank/bacteria/assembly_summary.txt'
-OUTPUT_PATH = '/s/angus/index/databases/kraken_databases/ncbi_genbank_assembly_summary.txt'
-OUTPUT_FASTA_FOLDER = '18July2017_kraken_db'
+# These variables can be edited as desired
+NCBI_GENBANK_ASSEMBLY_URL = 'ftp://ftp.ncbi.nlm.nih.gov/genomes/genbank/'
 FTP_REGEXP = re.compile(r'(reference genome|representative genome)')
 PLASMID_REGEXP = re.compile(r'plasmid')
-
 
 class KrakenParser(object):
 	def __init__(self):
@@ -26,7 +29,7 @@ class KrakenParser(object):
 		self.outfolder = '/'.join(OUTPUT_PATH.split('/')[:-1]) + '/' + OUTPUT_FASTA_FOLDER
 		self.total_files = 0
 
-	def parse_ncbi_data(self, data_path):
+	def parse_ncbi_data(self, data_path): # This takes in the assembly_summary files
 		with open(data_path, 'rb') as f:
 			data = f.read().split('\n')
 			for entry in data:
@@ -51,7 +54,6 @@ class KrakenParser(object):
 		plasmids = 0
 		for acc, vals in self.ftp_addresses.items():
 			extension = vals[0].split('/')[-1]
-			#print (extension)
 			counter += 1
 			request = urllib2.Request(vals[0] + '/' + extension + '_genomic.fna.gz')
 			request.add_header('Accept-encoding', 'gzip')
@@ -105,11 +107,16 @@ class KrakenParser(object):
 			
 
 def download_genbank_file(url, output_path):
-	f = urllib2.urlopen(url)
-	data = f.read()
+	group_data = []
+	for i in GROUP_list:
+		url_i = (url + i + "/assembly_summary.txt")
+		f = urllib2.urlopen(url_i)
+		print(url_i)
+		data = f.read()
+		group_data.append(data)
 	with open(output_path, 'wb') as out:
-		out.write(data)
-
+		for i in group_data:
+			out.write(i)
 
 def fasta_parse(fasta_file):
 	# Skip whitespace
@@ -157,8 +164,8 @@ def print_progress_bar (iteration, total, prefix = '', suffix = '', decimals = 1
 	# Print New Line on Complete
 	if iteration == total: 
 		print()
-
-
+		
+		
 if __name__ == '__main__':
 	if len(sys.argv) > 1:
 		if sys.argv[1] == 'new':
@@ -178,3 +185,17 @@ if __name__ == '__main__':
 	kp.mask_low_complexity_regions()
 
 	print('Done.\n')
+
+	
+## # download UniVec database to the library, and modify the headers to be picked up by Centrifuge and Kraken
+# Thanks to email collaboration with Steven Salzberg and Florian Breitwieser
+#wget -O - ftp://ftp.ncbi.nlm.nih.gov/pub/UniVec/UniVec | sed 's/>/>kraken:taxid|32630| /' > UniVec.fa
+# download EmVec database
+#wget ftp://ftp.ebi.ac.uk/pub/databases/emvec/emvec.dat.gz
+#gunzip -c emvec.dat | sed -n '/^DE/,/^\/\//p' | grep -E '^DE|^    ' | sed '/^  /s/  *[0-9]*$//g;;/^  /s/ //g;s/^DE/>kraken:taxid|32630| /;/^[^>]/s/.*/\U&/' > emvec.fa
+#Furthermore (and quite importantly), get the Enterobacteria phage PhiX-174 genome from http://www.ncbi.nlm.nih.gov/nuccore/CP004084.1 and also modify the header to start with '>kraken:taxid|32630| '. The PhiX-174 in the vector database is a bit different from that one, for some reason.
+#cat UniVec.fa emvec.fa phiX174 > vector_contaminants.fasta
+#move that vector_contaminants.fasta into the OUTPUT_FASTA_FOLDER prior to building the kraken database
+
+## Do we need to " re-run a kraken script after the database building, to set the lowest common ancestor (LCA) for all k-mers, that appear in contaminant sequences, to the artificial vector taxid (32630). For this I had to patch some files in kraken, and I can share this with you. Normally, those k-mers that are seen in both contaminants and genomes get a taxid 1 (i.e. root)  - which makes it more difficult to filter artificial reads.?"
+
