@@ -11,7 +11,7 @@ from subprocess import call
 from StringIO import StringIO
 
 # The following variables in uppercase must be edited for your server and to specify which genomes you want to include.
-OUTPUT_PATH = '/home/enrique/MEG_lab/TEST-kraken/combined_assembly_summary.txt'
+OUTPUT_PATH = '/s/angus/index/databases/kraken_databases/combined_assembly_summary.txt'
 OUTPUT_FASTA_FOLDER = 'meglab-customkraken-Jan2017'
 GROUP_list = ["bacteria","archaea","protozoa","viral"]
 #re.compile(r'(archaea|bacteria|fungi|invertebrate|metagenomes|other|plant|protozoa|vertebrate_mammalian|vertebrate_other|viral)') 	# These are all the options for genome categories. 
