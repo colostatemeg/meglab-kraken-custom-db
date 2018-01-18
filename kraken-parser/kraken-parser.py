@@ -13,8 +13,8 @@ from StringIO import StringIO
 # The following variables in uppercase must be edited for your server and to specify which genomes you want to include.
 OUTPUT_PATH = '/home/enrique/MEG_lab/TEST-kraken/combined_assembly_summary.txt'
 OUTPUT_FASTA_FOLDER = 'meglab-customkraken-Jan2017'
-GROUP_list = ["bacteria","archaea","protozoa","viral"]
-#re.compile(r'(archaea|bacteria|fungi|invertebrate|metagenomes|other|plant|protozoa|vertebrate_mammalian|vertebrate_other|viral)') 	# These are all the options for genome categories. 
+GROUP_list = ["bacteria","archaea","viral"]
+#archaea|bacteria|fungi|invertebrate|metagenomes|other|plant|protozoa|vertebrate_mammalian|vertebrate_other|viral 	# These are all the options for genome categories. 
 
 # These variables can be edited as desired
 NCBI_GENBANK_ASSEMBLY_URL = 'ftp://ftp.ncbi.nlm.nih.gov/genomes/genbank/'
@@ -186,6 +186,7 @@ if __name__ == '__main__':
 
 	print('Done.\n')
 
+## Work in progress section, these tasks are currently done manually and should be implemented into the code
 	
 ## # download UniVec database to the library, and modify the headers to be picked up by Centrifuge and Kraken
 # Thanks to email collaboration with Steven Salzberg and Florian Breitwieser
@@ -195,7 +196,19 @@ if __name__ == '__main__':
 #gunzip -c emvec.dat | sed -n '/^DE/,/^\/\//p' | grep -E '^DE|^    ' | sed '/^  /s/  *[0-9]*$//g;;/^  /s/ //g;s/^DE/>kraken:taxid|32630| /;/^[^>]/s/.*/\U&/' > emvec.fa
 #Furthermore (and quite importantly), get the Enterobacteria phage PhiX-174 genome from http://www.ncbi.nlm.nih.gov/nuccore/CP004084.1 and also modify the header to start with '>kraken:taxid|32630| '. The PhiX-174 in the vector database is a bit different from that one, for some reason.
 #cat UniVec.fa emvec.fa phiX174 > vector_contaminants.fasta
-#move that vector_contaminants.fasta into the OUTPUT_FASTA_FOLDER prior to building the kraken database
+#move that vector_contaminants.fasta into the OUTPUT_FASTA_FOLDER prior to adding the  genomes to the database, and before "building" the database
+
+## Use code to add all genomes to new database location, then download taxonomy and finally build the database
+
+#for file in temp_folder/*.fasta
+#do
+    #kraken-build --add-to-library $file --db $DBNAME
+#done
+#kraken-build --download-taxonomy --db meglab_kraken_db_Jan2018
+#kraken-build --build --db meglab_kraken_db_Jan2018
+
+## Need to erase the temporary folder and run the clean task for kraken
+kraken-build --db $DBNAME --clean
 
 ## Do we need to " re-run a kraken script after the database building, to set the lowest common ancestor (LCA) for all k-mers, that appear in contaminant sequences, to the artificial vector taxid (32630). For this I had to patch some files in kraken, and I can share this with you. Normally, those k-mers that are seen in both contaminants and genomes get a taxid 1 (i.e. root)  - which makes it more difficult to filter artificial reads.?"
 
