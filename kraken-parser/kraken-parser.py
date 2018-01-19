@@ -208,7 +208,7 @@ if __name__ == '__main__':
 #kraken-build --build --db meglab_kraken_db_Jan2018
 
 ## Need to erase the temporary folder and run the clean task for kraken
-kraken-build --db $DBNAME --clean
+#kraken-build --db $DBNAME --clean
 
 ## Do we need to " re-run a kraken script after the database building, to set the lowest common ancestor (LCA) for all k-mers, that appear in contaminant sequences, to the artificial vector taxid (32630). For this I had to patch some files in kraken, and I can share this with you. Normally, those k-mers that are seen in both contaminants and genomes get a taxid 1 (i.e. root)  - which makes it more difficult to filter artificial reads.?"
 
