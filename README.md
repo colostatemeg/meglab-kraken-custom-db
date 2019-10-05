@@ -1,4 +1,52 @@
 # meglab-kraken-custom-db
+# Authors: 
+  EnriqueDoster 
+# Description: 
+Step-by-step instructions for creating a custom kraken 2 database that re-annotates plasmid sequences to a generic plasmid ID.
+
+# Workflow :
+  First, must follow instructions from Kraken manual to download desired genomes and NCBI taxonomy. Then we use "sed" to modify plasmid sequence headers to change how kraken 2 classifies them. This simple change can greatly change the species-level identifition of taxa in metagenomic samples (using -confidence 1). 
+  
+  You can download the reference genomes and vector contaminants included in the standard database.
+      
+```bash
+# download reference genomes. reference kraken2 manual for further options
+kraken2-build --download-library archaea --db $DBNAME
+kraken2-build --download-library bacteria --db $DBNAME
+kraken2-build --download-library viral --db $DBNAME
+kraken2-build --download-library human --db $DBNAME
+kraken2-build --download-library UniVec --db $DBNAME
+kraken2-build --download-library UniVec_Core --db $DBNAME
+
+```
+        
+  Then, concatenate all downloaded genomes in the /library directories and edit plasmid sequence headers
+  
+       
+        cat $DBNAME/library/*/library.fna > $DBNAME/library/concatenated_genomes.fna
+        sed -i '/plasmid/c\>kraken:taxid|45202|plasmid' concatenated_library_genomes.fna
+
+  
+## Once the steps above are complete, follow the instructions in the Kraken manual to build the custom database
+http://ccb.jhu.edu/software/kraken/MANUAL.html
+
+Briefly, you need to add the fasta file using the "kraken-build --add-to-library $file --db $DBNAME" function like shown in the manual:
+
+       kraken2-build --add-to-library concatenated_library_genomes.fna --db $DBNAME
+
+Also, download the taxonomy information:
+        
+        kraken-build --download-taxonomy --db $DBNAME
+
+Finally, build the database
+
+        kraken-build --build --db $DBNAME
+
+
+
+
+## Kraken version 1 database
+
 # Created by MEGlab https://meg.colostate.edu/ 
 # Authors: 
   EnriqueDoster and Steven Lakin (lakinsm)
