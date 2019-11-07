@@ -1,5 +1,5 @@
 # meglab-kraken-custom-db
-# Authors: 
+# Author: 
   EnriqueDoster 
 # Description: 
 Step-by-step instructions for creating a custom kraken 2 database that re-annotates plasmid sequences to a generic plasmid ID.
@@ -22,11 +22,12 @@ kraken2-build --download-library UniVec_Core --db $DBNAME
         
   Then, concatenate all downloaded genomes in the /library directories and edit plasmid sequence headers
   
-       
-        cat $DBNAME/library/*/library.fna > $DBNAME/library/concatenated_genomes.fna
-        sed -i '/plasmid/c\>kraken:taxid|45202|plasmid' concatenated_library_genomes.fna
-
-  
+```bash   
+cat $DBNAME/library/*/library.fna > $DBNAME/library/concatenated_genomes.fna
+sed -i '/plasmid/c\>kraken:taxid|45202|plasmid' concatenated_library_genomes.fna
+```
+ 
+ 
 ## Once the steps above are complete, follow the instructions in the Kraken manual to build the custom database
 http://ccb.jhu.edu/software/kraken/MANUAL.html
 
@@ -36,11 +37,11 @@ Briefly, you need to add the fasta file using the "kraken-build --add-to-library
 
 Also, download the taxonomy information:
         
-        kraken-build --download-taxonomy --db $DBNAME
+        kraken2-build --download-taxonomy --db $DBNAME
 
 Finally, build the database
 
-        kraken-build --build --db $DBNAME
+        kraken2-build --build --db $DBNAME
 
 
 
